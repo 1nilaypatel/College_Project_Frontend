@@ -120,7 +120,7 @@ export default function Home() {
     new Chart(ctx, {
       type: 'line',
       data: {
-        labels: Object.keys(temperatureData),
+        labels: Object.keys(precipitationData),
         datasets: [{
           label: 'Precipitation (in mm)',
           data: Object.values(precipitationData),
