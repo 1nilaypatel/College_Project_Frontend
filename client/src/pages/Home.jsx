@@ -17,6 +17,8 @@ export default function Home() {
   const [temperatureData, setTemperatureData] = useState(null);
   const [precipitationData, setPrecipitationData] = useState(null);
   let api;
+  let temperatureChartInstance = null;
+  let precipitationChartInstance = null;
 
   const handleToggleTemperature = () => {
     setTemperature(true);
@@ -49,24 +51,10 @@ export default function Home() {
 
   const states = selectedCountry ? CountryStates[selectedCountry] : [];
 
-  // useEffect(() => {
-  //   // Fetch temperature data based on selected criteria
-  //   // For demonstration, let's use the sample data directly
-  //   setTemperatureData({
-  //     "1922": 36.5,
-  //     "1923": 37.2,
-  //     "1924": 37.8,
-  //     "1925": 38.1,
-  //     "1926": 38.5,
-  //     "1927": 37.9
-  //   }
-  //   );
-  // }, []);
-
   const handleSubmit = async () => {
     try {
-      if(temperature) api = 'http://127.0.0.1:8000/api/predict_temperature/';
-      if(precipitation) api = 'http://127.0.0.1:8000/api/predict_precipitation/';
+      if (temperature) api = 'http://127.0.0.1:8000/api/predict_temperature/';
+      if (precipitation) api = 'http://127.0.0.1:8000/api/predict_precipitation/';
       // console.log(api);
       const response = await axios.post(api, {
         country: selectedCountry,
@@ -74,8 +62,8 @@ export default function Home() {
         start_year: selectedStartYear,
         end_year: selectedEndYear,
       });
-      if(temperature) setTemperatureData(response.data);
-      if(precipitation) setPrecipitationData(response.data);
+      if (temperature) setTemperatureData(response.data);
+      if (precipitation) setPrecipitationData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -91,9 +79,12 @@ export default function Home() {
   }, [temperatureData, precipitationData]);
 
   const renderTemperatureChart = () => {
+    if (temperatureChartInstance) {
+      temperatureChartInstance.destroy();
+    }
     const ctx = document.getElementById('temperatureChart');
 
-    new Chart(ctx, {
+    temperatureChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
         labels: Object.keys(temperatureData),
@@ -115,9 +106,12 @@ export default function Home() {
   };
 
   const renderPrecipitationChart = () => {
+    if (precipitationChartInstance) {
+      precipitationChartInstance.destroy();
+    }
     const ctx = document.getElementById('precipitationChart');
 
-    new Chart(ctx, {
+    precipitationChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
         labels: Object.keys(precipitationData),
