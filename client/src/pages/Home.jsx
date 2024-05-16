@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import CountryStates from '../components/CountryStates.jsx';
 import Chart from 'chart.js/auto';
+import axios from 'axios';
 
 const countries = Object.keys(CountryStates);
 
@@ -14,6 +15,8 @@ export default function Home() {
   const [temperature, setTemperature] = useState(false);
   const [precipitation, setPrecipitation] = useState(false);
   const [temperatureData, setTemperatureData] = useState(null);
+  const [precipitationData, setPrecipitationData] = useState(null);
+  let api;
 
   const handleToggleTemperature = () => {
     setTemperature(true);
@@ -45,121 +48,48 @@ export default function Home() {
 
   const states = selectedCountry ? CountryStates[selectedCountry] : [];
 
-  useEffect(() => {
-    // Fetch temperature data based on selected criteria
-    // For demonstration, let's use the sample data directly
-    setTemperatureData({
-      "1922": 36.5,
-      "1923": 37.2,
-      "1924": 37.8,
-      "1925": 38.1,
-      "1926": 38.5,
-      "1927": 37.9,
-      "1928": 37.4,
-      "1929": 36.8,
-      "1930": 37.3,
-      "1931": 37.1,
-      "1932": 37.6,
-      "1933": 38.0,
-      "1934": 37.5,
-      "1935": 37.9,
-      "1936": 38.3,
-      "1937": 37.7,
-      "1938": 37.2,
-      "1939": 36.9,
-      "1940": 37.4,
-      "1941": 38.2,
-      "1942": 38.7,
-      "1943": 38.0,
-      "1944": 37.5,
-      "1945": 37.1,
-      "1946": 37.8,
-      "1947": 38.4,
-      "1948": 38.9,
-      "1949": 38.3,
-      "1950": 37.8,
-      "1951": 37.34,
-      "1952": 38.1,
-      "1953": 36.9,
-      "1954": 37.6,
-      "1955": 37.2,
-      "1956": 38.0,
-      "1957": 37.5,
-      "1958": 37.9,
-      "1959": 38.3,
-      "1960": 37.7,
-      "1961": 37.2,
-      "1962": 37.6,
-      "1963": 38.0,
-      "1964": 37.4,
-      "1965": 37.9,
-      "1966": 38.2,
-      "1967": 37.7,
-      "1968": 37.3,
-      "1969": 38.1,
-      "1970": 37.5,
-      "1971": 37.8,
-      "1972": 38.4,
-      "1973": 38.9,
-      "1974": 38.2,
-      "1975": 37.6,
-      "1976": 37.1,
-      "1977": 37.5,
-      "1978": 37.9,
-      "1979": 38.3,
-      "1980": 37.7,
-      "1981": 37.2,
-      "1982": 37.6,
-      "1983": 38.0,
-      "1984": 37.4,
-      "1985": 37.8,
-      "1986": 38.2,
-      "1987": 37.7,
-      "1988": 37.3,
-      "1989": 38.1,
-      "1990": 37.5,
-      "1991": 37.8,
-      "1992": 38.4,
-      "1993": 38.9,
-      "1994": 38.2,
-      "1995": 37.6,
-      "1996": 37.1,
-      "1997": 37.5,
-      "1998": 37.9,
-      "1999": 38.3,
-      "2000": 37.7,
-      "2001": 37.2,
-      "2002": 37.6,
-      "2003": 38.0,
-      "2004": 37.4,
-      "2005": 37.8,
-      "2006": 38.2,
-      "2007": 37.7,
-      "2008": 37.3,
-      "2009": 38.1,
-      "2010": 37.5,
-      "2011": 37.8,
-      "2012": 38.4,
-      "2013": 38.9,
-      "2014": 38.2,
-      "2015": 37.6,
-      "2016": 37.1,
-      "2017": 37.5,
-      "2018": 37.9,
-      "2019": 38.3,
-      "2020": 37.7
+  // useEffect(() => {
+  //   // Fetch temperature data based on selected criteria
+  //   // For demonstration, let's use the sample data directly
+  //   setTemperatureData({
+  //     "1922": 36.5,
+  //     "1923": 37.2,
+  //     "1924": 37.8,
+  //     "1925": 38.1,
+  //     "1926": 38.5,
+  //     "1927": 37.9
+  //   }
+  //   );
+  // }, []);
+
+  const handleSubmit = async () => {
+    try {
+      if(temperature) api = 'http://127.0.0.1:8000/api/predict_temperature/';
+      if(precipitation) api = 'http://127.0.0.1:8000/api/predict_precipitation/';
+      // console.log(api);
+      const response = await axios.post(api, {
+        country: selectedCountry,
+        state: selectedState,
+        start_year: selectedStartYear,
+        end_year: selectedEndYear,
+      });
+      if(temperature) setTemperatureData(response.data);
+      if(precipitation) setPrecipitationData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
-    );
-  }, []);
+  };
 
   useEffect(() => {
-    // Render the chart when temperatureData changes
     if (temperatureData) {
-      renderChart();
+      renderTemperatureChart();
     }
-  }, [temperatureData]);
+    if (precipitationData) {
+      renderPrecipitationChart();
+    }
+  }, [temperatureData, precipitationData]);
 
-  const renderChart = () => {
+  const renderTemperatureChart = () => {
     const ctx = document.getElementById('temperatureChart');
 
     new Chart(ctx, {
@@ -169,6 +99,30 @@ export default function Home() {
         datasets: [{
           label: 'Temperature (°C)',
           data: Object.values(temperatureData),
+          borderColor: '#167efb',
+          tension: 0.1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: false
+          }
+        }
+      }
+    });
+  };
+
+  const renderPrecipitationChart = () => {
+    const ctx = document.getElementById('precipitationChart');
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: Object.keys(temperatureData),
+        datasets: [{
+          label: 'Precipitation (in mm)',
+          data: Object.values(precipitationData),
           borderColor: '#167efb',
           tension: 0.1
         }]
@@ -258,11 +212,12 @@ export default function Home() {
       </div>
 
       <div className='flex justify-end'>
-        <button className='px-6 py-2 bg-green-500 rounded-md text-white hover:bg-green-600 focus:outline-none focus:bg-green-600'>Submit</button>
+        <button onClick={handleSubmit} className='px-6 py-2 bg-green-500 rounded-md text-white hover:bg-green-600 focus:outline-none focus:bg-green-600'>Submit</button>
       </div>
 
       <div>
-        <canvas id='temperatureChart' height={110}></canvas> 
+        <canvas id='temperatureChart' height={98}></canvas> 
+        <canvas id='precipitationChart' height={98}></canvas> 
       </div>
     </div>
   )
