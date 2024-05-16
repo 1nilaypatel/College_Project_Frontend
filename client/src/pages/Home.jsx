@@ -43,7 +43,8 @@ export default function Home() {
   };
 
   const handleSelectEndYear = (event) => {
-    setSelectedEndYear(event.target.value);
+    const selectedYear = parseInt(event.target.value);
+    setSelectedEndYear(selectedYear);
   };
 
   const states = selectedCountry ? CountryStates[selectedCountry] : [];
