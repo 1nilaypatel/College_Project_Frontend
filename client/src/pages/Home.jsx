@@ -80,7 +80,7 @@ export default function Home() {
         datasets: [{
           label: 'Temperature (°C)',
           data: Object.values(temperatureData),
-          borderColor: 'rgb(75, 192, 192)',
+          borderColor: '#167efb',
           tension: 0.1
         }]
       },
@@ -95,7 +95,7 @@ export default function Home() {
   };
 
   return (
-    <div className='flex flex-col gap-6 px-14 py-5'>
+    <div className='flex flex-col gap-4 px-14 py-5'>
       <div className="flex flex-row items-center space-x-5">
         <button
           onClick={handleToggleTemperature}
@@ -173,7 +173,7 @@ export default function Home() {
       </div>
 
       <div>
-        <canvas id='temperatureChart' width={400} height={200}></canvas>
+        <canvas id='temperatureChart' height={110}></canvas> 
       </div>
     </div>
   )
