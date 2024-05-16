@@ -1,52 +1,45 @@
-import { useState } from 'react';
+import { useState } from "react";
+import weather from "../assets/weather.png"
 
 export default function Appbar() {
-  const [temperature, setTemperature] = useState(true);
-  const [precipitation, setPrecipitation] = useState(true);
+  const [selected, setSelected] = useState(null);
+  const [temperature, setTemperature] = useState(false);
+  const [precipitation, setPrecipitation] = useState(false);
 
   const handleToggleTemperature = () => {
-    setTemperature(prevState => !prevState);
+     setTemperature(true);
+     setPrecipitation(false);
   };
 
   const handleTogglePrecipitation = () => {
-    setPrecipitation(prevState => !prevState);
+     setTemperature(false);
+     setPrecipitation(true);
   };
 
   return (
-    <div className='border p-8 flex justify-between items-center'>
+    <div className="border p-3 flex justify-between items-center">
       <div>
-        <img src="" alt="Logo" />
+        <img style={{height: "80px"}} src={weather} alt="" />
       </div>
-      <div className='flex gap-10'>
-        <div className='flex flex-col items-center'>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="1"
-            value={temperature ? "1" : "0"}
-            onChange={handleToggleTemperature}
-            className="w-6"
-          />
-          <button onClick={handleToggleTemperature}>
-            {temperature ? 'Temperature Off' : 'Temperature On'}
-          </button>
-        </div>
-        <div className='flex flex-col items-center'>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="1"
-            value={precipitation ? "1" : "0"}
-            onChange={handleTogglePrecipitation}
-            className="w-6"
-          />
-          <button onClick={handleTogglePrecipitation}>
-            {precipitation ? 'Precipitation Off' : 'Precipitation On'}
-          </button>
-        </div>
+      <div className="flex flex-row items-center space-x-5">
+        <button
+          onClick={handleToggleTemperature}
+          className={`px-6 py-2 text-white font-bold rounded transition-transform transform ${
+            temperature ? 'bg-green-500 hover:scale-105 cursor-pointer' : 'bg-red-500'
+          }`}
+        >
+          Temperature
+        </button>
+
+        <button
+          onClick={handleTogglePrecipitation}
+          className={`px-6 py-2 text-white font-bold rounded transition-transform transform ${
+            precipitation ? 'bg-green-500 hover:scale-105 cursor-pointer' : 'bg-red-500'
+          }`}
+        >
+          Precipitation
+        </button>
       </div>
     </div>
-  )
+  );
 }
