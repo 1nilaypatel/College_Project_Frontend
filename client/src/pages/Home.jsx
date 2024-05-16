@@ -1,31 +1,27 @@
 import { useState } from 'react';
+import CountryStates from '../components/CountryStates.jsx';
 
-const countries = [
-  "Afghanistan",
-  "Albania",
-  "Algeria",
-  "Andorra",
-  "Angola",
-  // Add more country names as needed
-];
+const countries = Object.keys(CountryStates);
 
-const states = [
-  "Alabama",
-  "Alaska",
-  "Arizona",
-  "Arkansas",
-  // Add more state names as needed
-];
-const startYears = Array.from({ length: 50 }, (_, index) => new Date().getFullYear() - index); // Generate an array of start years from current year to 50 years ago
-
-const endYears = Array.from({ length: 50 }, (_, index) => new Date().getFullYear() + index); // Generate an array of end years from current year to 50 years in the future
+const startYears = Array.from({ length: 75 }, (_, index) => new Date().getFullYear() - index);
 
 export default function Home() {
-
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
   const [selectedStartYear, setSelectedStartYear] = useState('');
   const [selectedEndYear, setSelectedEndYear] = useState('');
+  const [temperature, setTemperature] = useState(false);
+  const [precipitation, setPrecipitation] = useState(false);
+
+  const handleToggleTemperature = () => {
+    setTemperature(true);
+    setPrecipitation(false);
+  };
+
+  const handleTogglePrecipitation = () => {
+    setTemperature(false);
+    setPrecipitation(true);
+  };
 
   const handleSelectCountry = (event) => {
     setSelectedCountry(event.target.value);
@@ -36,22 +32,46 @@ export default function Home() {
   };
 
   const handleSelectStartYear = (event) => {
-    setSelectedStartYear(event.target.value);
+    const selectedYear = parseInt(event.target.value);
+    setSelectedStartYear(selectedYear);
+    setSelectedEndYear('');
   };
 
   const handleSelectEndYear = (event) => {
     setSelectedEndYear(event.target.value);
   };
 
+  const states = selectedCountry ? CountryStates[selectedCountry] : [];
+
   return (
-    <div className='flex flex-col gap-10 p-10'>
-      <div>
-        number 10
+    <div className='flex flex-col gap-6 px-14 py-5'>
+      <div className="flex flex-row items-center space-x-5">
+        <button
+          onClick={handleToggleTemperature}
+          className={`px-6 py-2 text-white rounded transition-transform transform ${
+            temperature ? 'bg-green-500 hover:scale-105 cursor-pointer shadow-2xl' : 'bg-red-500'
+          }`}
+        >
+          Temperature
+        </button>
+
+        <button
+          onClick={handleTogglePrecipitation}
+          className={`px-6 py-2 text-white rounded transition-transform transform ${
+            precipitation ? 'bg-green-500 hover:scale-105 cursor-pointer shadow-2xl' : 'bg-red-500'
+          }`}
+        >
+          Precipitation
+        </button>
       </div>
 
       <div className='flex justify-between'>
-
-        <select id="country" value={selectedCountry} onChange={handleSelectCountry}>
+        <select
+          id="country"
+          value={selectedCountry}
+          onChange={handleSelectCountry}
+          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 bg-[#167efb] text-gray-100 shadow-2xl"
+        >
           <option value="">Select a Country</option>
           {countries.map((country, index) => (
             <option key={index} value={country}>
@@ -60,38 +80,48 @@ export default function Home() {
           ))}
         </select>
 
-        <select id="state" value={selectedState} onChange={handleSelectState}>
+        <select
+          id="state"
+          value={selectedState}
+          onChange={handleSelectState}
+          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 bg-[#167efb] text-gray-100 shadow-2xl"
+        >
           <option value="">Select a State</option>
           {states.map((state, index) => (
             <option key={index} value={state}>{state}</option>
           ))}
         </select>
 
-        <select id="startYear" value={selectedStartYear} onChange={handleSelectStartYear} >
+        <select
+          id="startYear"
+          value={selectedStartYear}
+          onChange={handleSelectStartYear}
+          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 bg-[#167efb] text-gray-100 shadow-2xl"
+        >
           <option value="">Select Start Year</option>
-          {startYears.map(year => (
-            <option key={year} value={year}>{year}</option>
+          {startYears.map((year, index) => (
+            <option key={index} value={year}>{year}</option>
           ))}
         </select>
 
-        <select id="endYear" value={selectedEndYear} onChange={handleSelectEndYear}>
+        <select
+          id="endYear"
+          value={selectedEndYear}
+          onChange={handleSelectEndYear}
+          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 bg-[#167efb] text-gray-100 shadow-2xl"
+        >
           <option value="">Select End Year</option>
-          {endYears.map(year => (
-            <option key={year} value={year}>{year}</option>
+          {(selectedStartYear ? Array.from({ length: 2051 - selectedStartYear }, (_, index) => selectedStartYear + index) : []).map((year, index) => (
+            <option key={index} value={year}>{year}</option>
           ))}
         </select>
-
       </div>
 
       <div className='flex justify-end'>
-        <button className='px-5 py-2 bg-green-500 rounded-md'>
-          Submit
-        </button>
+        <button className='px-6 py-2 bg-green-500 rounded-md text-white hover:bg-green-600 focus:outline-none focus:bg-green-600'>Submit</button>
       </div>
 
-      <div>
-        graphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphgraphg
-      </div>
+      <div>Graph...</div>
     </div>
   )
 }
